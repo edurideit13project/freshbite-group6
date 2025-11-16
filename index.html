@@ -14,7 +14,6 @@ header {
     text-align:center;
 }
 header h1, header p { text-shadow: 2px 2px 4px rgba(0,0,0,0.6); }
-
 .container {width:90%; max-width:800px; margin:25px auto; background:white; padding:25px; border-radius:10px; box-shadow:0 0 10px #ccc;}
 button, input {width:100%; padding:12px; margin:8px 0; border-radius:5px;}
 button {background:#4CAF50; color:white; cursor:pointer; font-weight:bold; border:none;}
@@ -39,8 +38,8 @@ button {background:#4CAF50; color:white; cursor:pointer; font-weight:bold; borde
 
 <div class="container" id="roleSelect">
 <h2>Choose Your Role</h2>
-<button type="button" onclick="chooseRole('seller')">I am a Seller</button>
-<button type="button" onclick="chooseRole('buyer')">I am a Buyer</button>
+<button type="button" id="sellerBtn">I am a Seller</button>
+<button type="button" id="buyerBtn">I am a Buyer</button>
 </div>
 
 <!-- SELLER PANEL -->
@@ -49,8 +48,7 @@ button {background:#4CAF50; color:white; cursor:pointer; font-weight:bold; borde
 <input id="vegName" placeholder="Vegetable Name">
 <input id="vegPrice" placeholder="Price (GHC)">
 <input type="file" id="vegImages" multiple accept="image/*">
-<input type="hidden" id="editIndex">
-<button type="button" onclick="addOrUpdateVegetable()">Add / Update Vegetable</button>
+<button type="button" id="addProductBtn">Add Product</button>
 <h3>My Products</h3>
 <div id="sellerProducts" class="product-grid"></div>
 </div>
@@ -64,120 +62,123 @@ button {background:#4CAF50; color:white; cursor:pointer; font-weight:bold; borde
 <h3>Cart</h3>
 <div id="cartItems"></div>
 <div class="cart-total" id="cartTotal"></div>
-<button type="button" onclick="checkoutCart()">Checkout</button>
+<button type="button" id="checkoutBtn">Checkout</button>
 </div>
 
 <script>
-window.cart = [];
-window.filteredMarket = [];
+// Global variables
+let cart = [];
+let filteredMarket = [];
 
-// --- Role selection ---
-window.chooseRole = function(role){
+// --- Role buttons ---
+document.getElementById("sellerBtn").addEventListener("click", function(){
     document.getElementById("roleSelect").style.display = "none";
-    if(role === "seller") {
-        document.getElementById("sellerPanel").style.display = "block"; 
-        loadSellerProducts();
-    } else {
-        document.getElementById("buyerPanel").style.display = "block"; 
-        loadMarket(); 
-        loadCart();
-    }
-}
+    document.getElementById("sellerPanel").style.display = "block";
+    loadSellerProducts();
+});
+
+document.getElementById("buyerBtn").addEventListener("click", function(){
+    document.getElementById("roleSelect").style.display = "none";
+    document.getElementById("buyerPanel").style.display = "block";
+    loadMarket();
+    loadCart();
+});
 
 // --- Seller functionality ---
-window.addOrUpdateVegetable = async function(){
+document.getElementById("addProductBtn").addEventListener("click", async function(){
     let name = document.getElementById("vegName").value;
     let price = document.getElementById("vegPrice").value;
     let files = document.getElementById("vegImages").files;
+
     if(!name || !price){ alert("Enter name and price!"); return; }
-    let images=[];
+
+    let images = [];
     for(let f of files){ images.push(await fileToBase64(f)); }
 
-    let market = JSON.parse(localStorage.getItem("market")||"[]");
-    let editIndex = document.getElementById("editIndex").value;
-    if(editIndex!==""){ market[editIndex] = {name, price, images: images.length?images:market[editIndex].images}; document.getElementById("editIndex").value=""; }
-    else{ market.push({name, price, images}); }
+    let market = JSON.parse(localStorage.getItem("market") || "[]");
+    market.push({name, price, images});
     localStorage.setItem("market", JSON.stringify(market));
-    document.getElementById("vegName").value=""; document.getElementById("vegPrice").value=""; document.getElementById("vegImages").value="";
-    loadSellerProducts();
-}
 
-window.loadSellerProducts = function(){
-    let market = JSON.parse(localStorage.getItem("market")||"[]");
-    let box = document.getElementById("sellerProducts"); box.innerHTML="";
+    document.getElementById("vegName").value = "";
+    document.getElementById("vegPrice").value = "";
+    document.getElementById("vegImages").value = "";
+    loadSellerProducts();
+});
+
+function loadSellerProducts(){
+    let market = JSON.parse(localStorage.getItem("market") || "[]");
+    let box = document.getElementById("sellerProducts"); box.innerHTML = "";
     market.forEach((v,i)=>{
-        let html=<div class="product"><b>${v.name}</b><br>GHC ${v.price}<div class="gallery">;
-        v.images.forEach(img=>{ html+=<img src='${img}'>; });
-        html+=</div><button type="button" onclick='editVegetable(${i})'>Edit</button> <button type="button" onclick='deleteVegetable(${i})'>Delete</button></div>;
-        box.innerHTML+=html;
+        let html = <div class="product"><b>${v.name}</b><br>GHC ${v.price}<div class="gallery">;
+        v.images.forEach(img=>{ html += <img src='${img}'>; });
+        html += </div></div>;
+        box.innerHTML += html;
     });
-}
-
-window.editVegetable = function(i){
-    let market = JSON.parse(localStorage.getItem("market")||"[]");
-    document.getElementById("vegName").value = market[i].name;
-    document.getElementById("vegPrice").value = market[i].price;
-    document.getElementById("editIndex").value = i;
-}
-
-window.deleteVegetable = function(i){
-    if(!confirm("Delete this product?")) return;
-    let market = JSON.parse(localStorage.getItem("market")||"[]");
-    market.splice(i,1); localStorage.setItem("market", JSON.stringify(market));
-    loadSellerProducts();
 }
 
 // --- Buyer functionality ---
-window.loadMarket = function(){
-    let market = JSON.parse(localStorage.getItem("market")||"[]");
-    window.filteredMarket = [...market];
-    displayMarket(window.filteredMarket);
+function loadMarket(){
+    let market = JSON.parse(localStorage.getItem("market") || "[]");
+    filteredMarket = [...market];
+    displayMarket(filteredMarket);
 }
 
-window.displayMarket = function(market){
-    let box = document.getElementById("marketProducts"); box.innerHTML="";
+function displayMarket(market){
+    let box = document.getElementById("marketProducts"); box.innerHTML = "";
     market.forEach((v,i)=>{
-        let html=<div class="product"><b>${v.name}</b><br>GHC ${v.price}<div class="gallery">;
-        v.images.forEach(img=>{ html+=<img src='${img}'>; });
-        html+=</div><button type="button" onclick='addToCart(${i})'>Add to Cart</button></div>;
-        box.innerHTML+=html;
+        let html = <div class="product"><b>${v.name}</b><br>GHC ${v.price}<div class="gallery">;
+        v.images.forEach(img=>{ html += <img src='${img}'>; });
+        html += </div><button onclick="addToCart(${i})">Add to Cart</button></div>;
+        box.innerHTML += html;
     });
 }
 
-// --- Search products ---
-window.searchProducts = function(){
+// --- Search ---
+function searchProducts(){
     let term = document.getElementById("searchInput").value.toLowerCase();
-    let market = JSON.parse(localStorage.getItem("market")||"[]");
-    window.filteredMarket = market.filter(p=>p.name.toLowerCase().includes(term));
-    displayMarket(window.filteredMarket);
+    let market = JSON.parse(localStorage.getItem("market") || "[]");
+    filteredMarket = market.filter(p => p.name.toLowerCase().includes(term));
+    displayMarket(filteredMarket);
 }
 
 // --- Cart ---
-window.addToCart = function(i){
-    let product = window.filteredMarket[i]; 
-    window.cart.push({...product});
+function addToCart(i){
+    let product = filteredMarket[i];
+    cart.push({...product});
     loadCart();
 }
-window.loadCart = function(){
-    let box = document.getElementById("cartItems"); box.innerHTML="";
+
+function loadCart(){
+    let box = document.getElementById("cartItems"); box.innerHTML = "";
     let total = 0;
-    window.cart.forEach((item,i)=>{
+    cart.forEach((item,i)=>{
         total += Number(item.price);
-        box.innerHTML += <div class="cart-item">${item.name} - GHC ${item.price}<img src="${item.images[0]||''}"><button type="button" onclick="removeFromCart(${i})">Remove</button></div>;
+        box.innerHTML += <div class="cart-item">${item.name} - GHC ${item.price}<img src="${item.images[0]||''}"><button onclick="removeFromCart(${i})">Remove</button></div>;
     });
     document.getElementById("cartTotal").innerText = "Total: GHC " + total;
 }
-window.removeFromCart = function(i){ window.cart.splice(i,1); loadCart(); }
-window.checkoutCart = function(){
-    if(window.cart.length===0){ alert("Cart is empty!"); return; }
-    alert("Order confirmed!");
-    window.cart = [];
+
+function removeFromCart(i){
+    cart.splice(i,1);
     loadCart();
 }
 
-// --- Utility ---
-function fileToBase64(file){ return new Promise((res,rej)=>{ let reader = new FileReader(); reader.onload=()=>res(reader.result); reader.onerror=rej; reader.readAsDataURL(file); }); }
+document.getElementById("checkoutBtn").addEventListener("click", function(){
+    if(cart.length === 0){ alert("Cart is empty!"); return; }
+    alert("Order confirmed!");
+    cart = [];
+    loadCart();
+});
 
+// --- Utility ---
+function fileToBase64(file){
+    return new Promise((res, rej)=>{
+        let reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.onerror = rej;
+        reader.readAsDataURL(file);
+    });
+}
 </script>
 </body>
 </html>
