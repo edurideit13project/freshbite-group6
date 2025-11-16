@@ -1,253 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FreshBite Campus Market</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body {
-    font-family: Arial, sans-serif;
-    background: url('logo.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color:#333;
-    line-height:1.5;
-}
-header {
-    background: rgba(76,175,80,0.85);
-    color:#fff;
-    text-align:center;
-    padding:25px 15px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.3);
-}
-header h1 { font-size:2em; margin-bottom:5px; }
-header p { font-size:1em; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshBite Campus Market</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fefefe;
+            color: #333;
+        }
 
-.container {
-    width:90%;
-    max-width:500px;
-    margin:25px auto;
-    background: rgba(255,255,255,0.95);
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.2);
-}
-h2 { text-align:center; color:#4CAF50; margin-bottom:20px; }
+        header {
+            text-align: center;
+            background: #28a745;
+            color: white;
+            padding: 20px;
+        }
 
-input, select, button {
-    width:100%;
-    padding:14px;
-    margin:10px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
-    font-size:1em;
-    outline:none;
-    transition: all 0.3s ease;
-}
-input:focus, select:focus { border-color:#4CAF50; box-shadow:0 0 8px rgba(76,175,80,0.4); }
-button {
-    background:#4CAF50;
-    color:#fff;
-    font-weight:bold;
-    font-size:1.1em;
-    cursor:pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-}
-button:hover { background:#45a049; transform:translateY(-2px); }
+        header img.logo {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
 
-#sellerPanel, #buyerPanel { display:none; }
+        .role-selection {
+            text-align: center;
+            margin: 30px 0;
+        }
 
-.product {
-    background:#f9f9f9;
-    padding:15px;
-    margin:12px 0;
-    border-radius:10px;
-    border-left:6px solid #4CAF50;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-.product img { width:100%; border-radius:8px; margin-bottom:8px; }
-.product button { margin-top:8px; }
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
 
-@media (max-width:768px) {
-    header h1{font-size:1.6em;}
-    header p{font-size:0.95em;}
-    .container{padding:20px;}
-    input,select,button{padding:12px;font-size:0.95em;}
-}
-@media (max-width:480px) {
-    header h1{font-size:1.4em;}
-    header p{font-size:0.9em;}
-    .container{padding:18px;}
-    input,select,button{padding:10px;font-size:0.9em;}
-}
-</style>
+        button:hover {
+            background: #218838;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-card h3 {
+            margin: 5px 0;
+        }
+
+        .product-card p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        .product-card a button {
+            width: 100%;
+            background: #25D366;
+            border-radius: 5px;
+        }
+
+        .product-card a button:hover {
+            background: #128C7E;
+        }
+
+        #searchInput, #categoryFilter {
+            padding: 10px;
+            margin: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            max-width: 300px;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <img src="images/logo.jpg" alt="FreshBite Logo" class="logo">
+        <h1>FreshBite Campus Market</h1>
+        <p>Your campus hub for fresh food and essentials!</p>
+    </header>
 
-<header>
-<h1>FreshBite Campus Market</h1>
-<p>Affordable Vegetables for Students</p>
-</header>
+    <main>
+        <div class="role-selection">
+            <button id="buyerBtn">I am a Buyer</button>
+            <button id="sellerBtn">I am a Seller</button>
+        </div>
 
-<!-- ROLE SELECTION -->
-<div class="container" id="roleSelect">
-<h2>Choose Account Type</h2>
-<button onclick="chooseRole('seller')">I am a Seller</button>
-<button onclick="chooseRole('buyer')">I am a Buyer</button>
-</div>
+        <!-- Seller Section -->
+        <section id="sellerSection" class="hidden">
+            <h2>Seller Dashboard</h2>
+            <form id="sellerForm">
+                <input type="text" id="sellerName" placeholder="Your Name" required>
+                <input type="text" id="productName" placeholder="Product Name" required>
+                <input type="number" id="productPrice" placeholder="Price (GHS)" required>
+                <select id="productCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="Vegetables">Vegetables</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Drinks">Drinks</option>
+                    <option value="Others">Others</option>
+                </select>
+                <input type="file" id="productImage" accept="image/*" required>
+                <input type="text" id="whatsappNumber" placeholder="Your WhatsApp number" required>
+                <button type="submit">Add Product</button>
+            </form>
+            <div id="productList" class="product-grid"></div>
+        </section>
 
-<!-- AUTH SECTION -->
-<div class="container" id="authSection" style="display:none;">
-<h2 id="authTitle">Login</h2>
-<input id="name" placeholder="Full Name">
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<input id="whatsapp" placeholder="WhatsApp Number (for sellers)">
-<button onclick="registerUser()">Create Account</button>
-<button onclick="loginUser()">Login</button>
-</div>
+        <!-- Buyer Section -->
+        <section id="buyerSection" class="hidden">
+            <h2>Available Products</h2>
+            <input type="text" id="searchInput" placeholder="Search products..." />
+            <select id="categoryFilter">
+                <option value="All">All Categories</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Drinks">Drinks</option>
+                <option value="Others">Others</option>
+            </select>
+            <div id="buyerProducts" class="product-grid"></div>
+        </section>
+    </main>
 
-<!-- SELLER DASHBOARD -->
-<div class="container" id="sellerPanel">
-<h2>Seller Dashboard</h2>
-<input id="vegName" placeholder="Vegetable Name">
-<input id="vegPrice" placeholder="Price (GHC)">
-<input type="file" id="vegImage" accept="image/*">
-<button onclick="addVegetable()">Add Vegetable</button>
-<h3>My Vegetables</h3>
-<div id="sellerProducts"></div>
-</div>
+    <script>
+        const buyerBtn = document.getElementById('buyerBtn');
+        const sellerBtn = document.getElementById('sellerBtn');
+        const sellerSection = document.getElementById('sellerSection');
+        const buyerSection = document.getElementById('buyerSection');
+        const sellerForm = document.getElementById('sellerForm');
+        const productList = document.getElementById('productList');
+        const buyerProducts = document.getElementById('buyerProducts');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
 
-<!-- BUYER DASHBOARD -->
-<div class="container" id="buyerPanel">
-<h2>Buyer Dashboard</h2>
-<h3>Available Vegetables</h3>
-<div id="marketProducts"></div>
-</div>
+        let products = JSON.parse(localStorage.getItem('products')) || [];
 
-<script>
-let selectedRole = "";
-let currentUser = "";
+        buyerBtn.addEventListener('click', () => {
+            sellerSection.classList.add('hidden');
+            buyerSection.classList.remove('hidden');
+            displayBuyerProducts();
+        });
 
-function chooseRole(role){
-    selectedRole = role;
-    document.getElementById("roleSelect").style.display = "none";
-    document.getElementById("authSection").style.display = "block";
-    document.getElementById("authTitle").innerText = 
-        role==='seller' ? "Seller Login / Register" : "Buyer Login / Register";
-}
+        sellerBtn.addEventListener('click', () => {
+            buyerSection.classList.add('hidden');
+            sellerSection.classList.remove('hidden');
+        });
 
-function registerUser(){
-    let name=document.getElementById("name").value;
-    let email=document.getElementById("email").value;
-    let pass=document.getElementById("password").value;
-    let whatsapp = selectedRole==='seller'? document.getElementById("whatsapp").value : null;
-    if(selectedRole==='seller' && !whatsapp){ alert("Please provide WhatsApp!"); return; }
+        sellerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const sellerName = document.getElementById('sellerName').value;
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const category = document.getElementById('productCategory').value;
+            const whatsapp = document.getElementById('whatsappNumber').value;
+            const imageFile = document.getElementById('productImage').files[0];
 
-    let user={name,email,pass,role:selectedRole,whatsapp};
-    localStorage.setItem(email,JSON.stringify(user));
-    alert("Account created!");
-}
+            if(imageFile){
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const product = { sellerName, name, price, category, image: reader.result, whatsapp };
+                    products.push(product);
+                    localStorage.setItem('products', JSON.stringify(products));
+                    displaySellerProducts();
+                    sellerForm.reset();
+                }
+                reader.readAsDataURL(imageFile);
+            }
+        });
 
-function loginUser(){
-    let email=document.getElementById("email").value;
-    let pass=document.getElementById("password").value;
-    let userData=localStorage.getItem(email);
-    if(!userData){ alert("Account not found!"); return; }
-    let data=JSON.parse(userData);
-    if(data.pass!==pass){ alert("Wrong password!"); return; }
-
-    currentUser=email;
-    if(data.role==='seller'){ showSellerPanel(); }
-    else { showBuyerPanel(); }
-}
-
-function showSellerPanel(){
-    document.getElementById("authSection").style.display="none";
-    document.getElementById("sellerPanel").style.display="block";
-    loadSellerProducts();
-}
-
-function showBuyerPanel(){
-    document.getElementById("authSection").style.display="none";
-    document.getElementById("buyerPanel").style.display="block";
-    loadMarket();
-}
-
-function addVegetable(){
-    let name=document.getElementById("vegName").value;
-    let price=document.getElementById("vegPrice").value;
-    let imgInput=document.getElementById("vegImage");
-    if(!name || !price){ alert("Enter name and price!"); return; }
-
-    let sellerData=JSON.parse(localStorage.getItem(currentUser));
-    if(!sellerData.whatsapp){ alert("Seller WhatsApp missing!"); return; }
-
-    if(imgInput.files && imgInput.files[0]){
-        let reader=new FileReader();
-        reader.onload=function(e){
-            let item={
-                seller:currentUser,
-                name,
-                price,
-                image:e.target.result,
-                whatsapp:sellerData.whatsapp
-            };
-            saveVegetable(item);
+        function displaySellerProducts() {
+            productList.innerHTML = '';
+            products.forEach(product => {
+                productList.innerHTML += `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>Price: GHS ${product.price}</p>
+                        <p>Category: ${product.category}</p>
+                        <p>Seller: ${product.sellerName}</p>
+                        <p>WhatsApp: ${product.whatsapp}</p>
+                    </div>
+                `;
+            });
         }
-        reader.readAsDataURL(imgInput.files[0]);
-    }else{
-        let item={seller:currentUser,name,price,image:null,whatsapp:sellerData.whatsapp};
-        saveVegetable(item);
-    }
-}
 
-function saveVegetable(item){
-    let all=JSON.parse(localStorage.getItem("market")||"[]");
-    all.push(item);
-    localStorage.setItem("market",JSON.stringify(all));
-    alert("Vegetable added!");
-    document.getElementById("vegName").value="";
-    document.getElementById("vegPrice").value="";
-    document.getElementById("vegImage").value="";
-    loadSellerProducts();
-}
+        function displayBuyerProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+            buyerProducts.innerHTML = '';
 
-function loadSellerProducts(){
-    let all=JSON.parse(localStorage.getItem("market")||"[]");
-    let myList=all.filter(v=>v.seller===currentUser);
-    let box=document.getElementById("sellerProducts");
-    box.innerHTML="";
-    myList.forEach(v=>{
-        box.innerHTML+=`<div class='product'>
-        ${v.image?<img src="${v.image}">:""}
-        <b>${v.name}</b> - GHC ${v.price}
-        </div>`;
-    });
-}
+            const filteredProducts = products.filter(product => {
+                const matchesName = product.name.toLowerCase().includes(searchTerm);
+                const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+                return matchesName && matchesCategory;
+            });
 
-function loadMarket(){
-    let all=JSON.parse(localStorage.getItem("market")||"[]");
-    let box=document.getElementById("marketProducts");
-    box.innerHTML="";
-    all.forEach(v=>{
-        box.innerHTML+=`<div class='product'>
-        ${v.image?<img src="${v.image}">:""}
-        <b>${v.name}</b><br>
-        Price: GHC ${v.price}<br>
-        Seller: ${v.seller}<br>
-        <button onclick="buyWhatsApp('${v.whatsapp}','${v.name}','${v.price}')">Buy on WhatsApp</button>
-        </div>`;
-    });
-}
+            filteredProducts.forEach(product => {
+                buyerProducts.innerHTML += `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>Price: GHS ${product.price}</p>
+                        <p>Category: ${product.category}</p>
+                        <p>Seller: ${product.sellerName}</p>
+                        <a href="https://wa.me/${product.whatsapp}" target="_blank">
+                            <button>Buy on WhatsApp</button>
+                        </a>
+                    </div>
+                `;
+            });
+        }
 
-function buyWhatsApp(number,product,price){
-    if(!number){ alert("Seller WhatsApp not provided!"); return; }
-    let msg=Hello, I want to buy "${product}" for GHC ${price};
-    let url=https://wa.me/${number}?text=${encodeURIComponent(msg)};
-    window.open(url,"_blank");
-}
-</script>
+        // Add event listeners for search and category filter
+        searchInput.addEventListener('input', displayBuyerProducts);
+        categoryFilter.addEventListener('change', displayBuyerProducts);
 
+        // Load products initially
+        displaySellerProducts();
+        displayBuyerProducts();
+    </script>
 </body>
 </html>
