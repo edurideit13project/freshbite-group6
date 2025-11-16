@@ -97,7 +97,10 @@ document.querySelectorAll('.btn-close').forEach(btn=>btn.addEventListener('click
 // ===== Data =====
 let users = JSON.parse(localStorage.getItem('users')||'[]');
 let rides = JSON.parse(localStorage.getItem('rides')||'[]');
-let currentUser = JSON.parse(localStorage.getItem('currentUser')||'null');
+let currentUser = null;
+try{
+  currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+}catch(e){ currentUser = null; }
 
 // ===== Preload rides if empty =====
 if(rides.length===0){
@@ -111,7 +114,7 @@ localStorage.setItem('rides', JSON.stringify(rides));
 
 // ===== Update Nav =====
 function updateNav(){
-  if(currentUser){ 
+  if(currentUser && typeof currentUser==='object'){ 
     navLogin.style.display='none'; 
     navSignup.style.display='none'; 
     navLogout.style.display='inline-block'; 
